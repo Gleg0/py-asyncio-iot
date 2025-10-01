@@ -31,8 +31,10 @@ class IOTService:
         return device_id
 
     async def unregister_device(self, device_id: str) -> None:
-        await self.devices[device_id].disconnect()
-        del self.devices[device_id]
+        device = self.devices.pop(device_id, None)
+        if device is None:
+            raise ValueError(f"Unknown device_id: {device_id}")
+        await device.disconnect()
 
     def get_device(self, device_id: str) -> Device:
         return self.devices[device_id]
